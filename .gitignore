@@ -1,0 +1,94 @@
+# ===============================
+# Rust / Cargo
+# ===============================
+
+# Compiled output
+/target/
+
+# Debugging files
+**/debug/
+**/incremental/
+
+# Rust analyzer
+**/rust-analyzer/
+
+# Cargo lockfile
+# 对库项目可忽略，二进制项目建议保留
+Cargo.lock
+
+# ===============================
+# IDE / Editor
+# ===============================
+
+# JetBrains IDEs
+.idea/
+
+# VSCode
+.vscode/
+
+# Flycheck / editor temp files
+**/flycheck*/
+
+# Vim / Neovim swap files
+*.swp
+*.swo
+*.un~
+
+# Emacs temp files
+*~
+.\#*
+
+# ===============================
+# Operating System files
+# ===============================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ===============================
+# Environment / Secrets
+# ===============================
+
+.env
+IFLOW.md
+.env.*
+
+# ===============================
+# Logs / temp files
+# ===============================
+
+*.log
+*.tmp
+*.temp
+*.bak
+
+# ===============================
+# CI / build artifacts
+# ===============================
+
+# GitHub Actions
+.github/workflows/*
+
+# Other temp build artifacts
+*.class
+*.jar
+*.pyc
+*.pyo
+*.pyd
+
+# ===============================
+# Optional / personal
+# ===============================
+
+# Local project configs
+*.local

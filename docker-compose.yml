@@ -1,0 +1,40 @@
+# version: "3.9"  # 已废弃，不再需要
+services:
+  app:
+    platform: linux/amd64
+    build: .
+    container_name: orpheus_app
+    ports:
+      - "8080:8080"  # 直接使用端口号而不是环境变量
+    env_file:
+      - docker.env
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DATABASE_URL=postgres://orpheus_user:secret@postgres:5432/orpheus_db
+      - REDIS_URL=redis://redis:6379
+
+  postgres:
+    image: postgres:15
+    container_name: orpheus_postgres
+    environment:
+      - POSTGRES_USER=orpheus_user
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=orpheus_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"  # 直接使用端口号而不是环境变量
+
+  redis:
+    image: redis:7
+    container_name: orpheus_redis
+    volumes:
+      - redisdata:/data
+    ports:
+      - "6379:6379"  # 直接使用端口号而不是环境变量
+
+volumes:
+  pgdata:
+  redisdata:
