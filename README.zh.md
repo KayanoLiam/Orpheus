@@ -150,13 +150,9 @@ orpheus/
    cd frontend
 
    # 安装依赖
-   npm install
-   # 或使用 pnpm
    pnpm install
 
    # 运行开发服务器
-   npm run dev
-   # 或
    pnpm dev
    ```
 
@@ -280,19 +276,19 @@ cargo check
 cd frontend
 
 # 安装依赖
-npm install
+pnpm install
 
 # 运行开发服务器
-npm run dev
+pnpm dev
 
 # 构建生产版本
-npm run build
+pnpm build
 
 # 代码检查
-npm run lint
+pnpm lint
 
 # 类型检查
-npm run type-check
+pnpm type-check
 ```
 
 ## 部署
@@ -307,8 +303,8 @@ cargo build --release
 #### 前端
 ```bash
 cd frontend
-npm run build
-npm start
+pnpm build
+pnpm start
 ```
 
 ### Docker 部署

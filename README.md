@@ -150,13 +150,9 @@ orpheus/
    cd frontend
 
    # Install dependencies
-   npm install
-   # or use pnpm
    pnpm install
 
    # Run development server
-   npm run dev
-   # or
    pnpm dev
    ```
 
@@ -280,19 +276,19 @@ cargo check
 cd frontend
 
 # Install dependencies
-npm install
+pnpm install
 
 # Run development server
-npm run dev
+pnpm dev
 
 # Build production version
-npm run build
+pnpm build
 
 # Code checking
-npm run lint
+pnpm lint
 
 # Type checking
-npm run type-check
+pnpm type-check
 ```
 
 ## Deployment
@@ -307,8 +303,8 @@ cargo build --release
 #### Frontend
 ```bash
 cd frontend
-npm run build
-npm start
+pnpm build
+pnpm start
 ```
 
 ### Docker Deployment
