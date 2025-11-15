@@ -1,11 +1,11 @@
 // 简化的会话存储测试
 use uuid::Uuid;
 use orpheus::auth::session_store::SessionStore;
-use sqlx::{PgPool, Pool, Postgres};
 use std::env;
 
 // 测试配置
 struct TestConfig {
+    #[allow(dead_code)]
     database_url: String,
     redis_url: String,
 }
@@ -14,7 +14,7 @@ impl Default for TestConfig {
     fn default() -> Self {
         Self {
             database_url: env::var("TEST_DATABASE_URL")
-                .unwrap_or_else(|_| "postgres://kayano:121381@localhost:5432/test_postgres".to_string()),
+                .unwrap_or_else(|_| "postgres://orpheus_user:secret@localhost:5432/orpheus_db".to_string()),
             redis_url: env::var("TEST_REDIS_URL")
                 .unwrap_or_else(|_| "redis://localhost:6379".to_string()),
         }
@@ -28,6 +28,7 @@ fn create_test_redis_client() -> redis::Client {
 }
 
 // 创建测试会话
+#[allow(dead_code)]
 async fn create_test_session(
     redis_client: &redis::Client,
     user_id: Uuid,

@@ -1,4 +1,4 @@
-use actix_web::{test, web, App};
+use actix_web::{web, App};
 use sqlx::{PgPool, Pool, Postgres};
 use std::env;
 use uuid::Uuid;
@@ -13,7 +13,7 @@ impl Default for TestConfig {
     fn default() -> Self {
         Self {
             database_url: env::var("TEST_DATABASE_URL")
-                .unwrap_or_else(|_| "postgres://kayano:121381@localhost:5432/test_postgres".to_string()),
+                .unwrap_or_else(|_| "postgres://orpheus_user:secret@localhost:5432/orpheus_db".to_string()),
             redis_url: env::var("TEST_REDIS_URL")
                 .unwrap_or_else(|_| "redis://localhost:6379".to_string()),
         }
@@ -46,16 +46,18 @@ async fn cleanup_test_data(pool: &Pool<Postgres>) {
 }
 
 /// 创建测试应用实例
-pub async fn create_test_app() -> impl actix_web::dev::ServiceFactory<
-    actix_web::dev::ServiceRequest,
-    Config = (),
-    Response = actix_web::dev::ServiceResponse,
-    Error = actix_web::Error,
-    InitError = (),
+pub fn create_test_app(
+    pool: Pool<Postgres>,
+    redis_client: redis::Client,
+) -> App<
+    impl actix_web::dev::ServiceFactory<
+        actix_web::dev::ServiceRequest,
+        Config = (),
+        Response = actix_web::dev::ServiceResponse,
+        Error = actix_web::Error,
+        InitError = (),
+    >,
 > {
-    let pool = create_test_pool().await;
-    let redis_client = create_test_redis_client();
-    
     App::new()
         .app_data(web::Data::new(pool))
         .app_data(web::Data::new(redis_client))
