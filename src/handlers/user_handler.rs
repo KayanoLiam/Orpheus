@@ -421,7 +421,8 @@ pub async fn user_delete(
             info!("User with id {} deleted successfully", user_id);
             // 4.销毁session，要求重新注册登录
             if let Err(e) = session_store.destroy_session(session_id).await {
-                println!("Failed to destroy session: {:?}", e);
+                // println!("Failed to destroy session: {:?}", e);
+                error!("Failed to destroy session for session_id {}: {:?}", session_id, e);
             }
             HttpResponse::Ok().json(ApiResponse::<()> {
                 code: 200,

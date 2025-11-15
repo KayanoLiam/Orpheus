@@ -27,6 +27,8 @@ rand_core = "0.10.0-rc-2" #用于生成随机盐
 redis = { version = "0.23.1", features = ["tokio-comp", "connection-manager"] } #用于缓存和会话管理
 uuid = { version = "1", features = ["serde", "v4"] }
 tracing = "0.1"
-tracing-subscriber = "0.3"  # 提供 Subscriber 实现，比如打印到终端
+tracing-subscriber = "0.3" # 提供 Subscriber 实现，比如打印到终端
+reqwest = { version = "0.12.24", features = ["json"] }
+actix-cors = "0.6"
 [dev-dependencies]
 # 测试依赖（actix-web 的测试功能已包含在主依赖中）

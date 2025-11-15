@@ -29,6 +29,7 @@ use dotenvy::dotenv;
 // 导入数据库连接池
 use sqlx::{Pool, Postgres};
 // 导入环境变量处理
+use crate::handlers::github_handler::get_github_repo_stars;
 use orpheus::handlers::user_handler::user_delete;
 use std::env;
 
@@ -58,11 +59,20 @@ async fn main() -> anyhow::Result<()> {
 
     // 创建并配置 HTTP 服务器
     HttpServer::new(move || {
+        // 初始化cors中间件
+        let cors = actix_cors::Cors::default()
+            .allowed_origin("http://localhost:3000") // 只允许前端域名
+            .allowed_methods(vec!["GET"]) // 只允许 GET 请求
+            .allowed_headers(vec![actix_web::http::header::CONTENT_TYPE])
+            .max_age(3600);
+
         // 创建 Bearer Token 认证中间件
         let auth = HttpAuthentication::bearer(session_validator);
 
         // 配置应用程序
         App::new()
+            // 应用 CORS 中间件
+            .wrap(cors)
             // 注册数据库连接池为应用数据
             .app_data(actix_web::web::Data::new(pool.clone()))
             // 注册 Redis 客户端为应用数据
@@ -75,6 +85,7 @@ async fn main() -> anyhow::Result<()> {
             .service(user_logout)
             .service(user_reset_password)
             .service(user_delete)
+            .service(get_github_repo_stars)
             // 需要认证的 API 端点组
             .service(
                 web::scope("/api")
