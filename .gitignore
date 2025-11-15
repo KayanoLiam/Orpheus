@@ -61,7 +61,10 @@ Desktop.ini
 
 .env
 IFLOW.md
+
+# 忽略所有 .env.* 文件，除了 .env.example
 .env.*
+!.env.example
 
 # ===============================
 # Logs / temp files
