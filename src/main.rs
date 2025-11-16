@@ -32,6 +32,7 @@ use sqlx::{Pool, Postgres};
 use crate::handlers::github_handler::get_github_repo_stars;
 use orpheus::handlers::user_handler::user_delete;
 use std::env;
+use crate::auth::status::auth_status;
 
 /// 应用程序入口点
 ///
@@ -86,6 +87,7 @@ async fn main() -> anyhow::Result<()> {
             .service(user_reset_password)
             .service(user_delete)
             .service(get_github_repo_stars)
+            .service(auth_status)
             // 需要认证的 API 端点组
             .service(
                 web::scope("/api")
