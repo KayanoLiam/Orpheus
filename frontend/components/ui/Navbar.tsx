@@ -6,7 +6,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 // import { Button } from '@/components/ui/button';
 
-
+const handleClick = async () => {
+  // 1. 从
+}
 
 /**
  * 这是一个从后端获取 GitHub 仓库星标数量的组件
@@ -99,11 +101,8 @@ const Navbar = () => {
         {/* 右侧部分 */}
         <div className="hidden md:flex items-center gap-4">
           <GitHubStarButton owner="KayanoLiam" repo="Orpheus" />
-          <Link href="/dashboard">
-            <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+          <Link href="/dashboard" className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 inline-block" onClick={() => console.log('Dashboard link clicked')}>
               ダッシュボード
-            </button>
-
           </Link>
           {/* <img src="/avatar.jpg" alt="User Avatar" className="h-8 w-8 rounded-full" /> */}
         </div>

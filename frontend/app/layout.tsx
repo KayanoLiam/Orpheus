@@ -33,7 +33,7 @@ export default function RootLayout({
       </body> */}
       <body>
         <Navbar />
-        <Main />
+        {children}
       </body>
     </html>
   );
