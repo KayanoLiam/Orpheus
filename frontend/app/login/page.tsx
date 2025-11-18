@@ -1,10 +1,24 @@
 // app/login/page.tsx
 
-import type { NextPage } from 'next';
-import Link from 'next/link';
-import { Github, Lock, Eye, BookOpen } from 'lucide-react';
+"use client";
 
-const LoginPage: NextPage = () => {
+import { useState } from 'react';
+import Link from 'next/link';
+import { Github, Lock, Eye, EyeOff, BookOpen } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+const LoginPage = () => {
+  const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
       {/* The main grid layout */}
@@ -36,14 +50,54 @@ const LoginPage: NextPage = () => {
 
               {/* Social Logins */}
               <div className="space-y-3">
-                <button className="w-full flex items-center justify-center gap-2 p-3 border border-green-400 rounded-md hover:bg-gray-50 font-semibold">
-                  <Github size={20} />
-                  GitHubで続行
-                </button>
-                <button className="w-full flex items-center justify-center gap-2 p-3 border rounded-md hover:bg-gray-50 font-semibold">
-                  <Lock size={20} />
-                  SSOで続行
-                </button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <button className="w-full flex items-center justify-center gap-2 p-3 border border-green-400 rounded-md hover:bg-gray-50 font-semibold">
+                      <Github size={20} />
+                      GitHubで続行
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>GitHub認証は現在開発中です。</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        まだご利用いただけませんが、準備が整い次第アクセスできるようになります。
+
+                        「続行」をクリックすると、このプロジェクトの GitHub リポジトリへ移動します。
+                        しばらくお待ちください。
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => window.location.href = "https://github.com/KayanoLiam/Orpheus.git"}
+                      >続行</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <button className="w-full flex items-center justify-center gap-2 p-3 border rounded-md hover:bg-gray-50 font-semibold">
+                      <Lock size={20} />
+                      SSOで続行
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>SSO認証は現在開発中です。</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        まだご利用いただけませんが、準備が整い次第アクセスできるようになります。
+
+                        この機能は現在開発中です。しばらくお待ちください。
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                      <AlertDialogAction>閉じる</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
 
               {/* Separator */}
@@ -73,13 +127,17 @@ const LoginPage: NextPage = () => {
                   </div>
                   <div className="relative">
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       id="password"
                       defaultValue="••••••••••••"
                       className="w-full p-3 border rounded-md bg-blue-50 border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
-                    <button type="button" className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500">
-                      <Eye size={18} />
+                    <button 
+                      type="button" 
+                      className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
