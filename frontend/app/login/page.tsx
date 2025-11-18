@@ -1,100 +1,127 @@
-"use client";
+// app/login/page.tsx
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import type { NextPage } from 'next';
+import Link from 'next/link';
+import { Github, Lock, Eye, BookOpen } from 'lucide-react';
 
-const Login = () => {
-  const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      // 调用后端登录 API
-      const response = await axios.post('http://127.0.0.1:8080/login', {
-        email,
-        password
-      });
-
-      if (response.data.success) {
-        // 登录成功，保存 session_id 到 localStorage
-        // 假设后端返回的 session_id 在 response.data.data.session_id 中
-        if (response.data.data?.session_id) {
-          localStorage.setItem('session_id', response.data.data.session_id);
-        }
-        
-        // 跳转到 dashboard
-        router.push('/dashboard');
-      } else {
-        setError('登录失败：' + (response.data.message || '未知错误'));
-      }
-    } catch (error: any) {
-      console.error('登录错误:', error);
-      setError('登录失败：' + (error.response?.data?.message || error.message || '网络错误'));
-    } finally {
-      setLoading(false);
-    }
-  };
-
+const LoginPage: NextPage = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-      <div className="max-w-md w-full p-8 bg-white dark:bg-black rounded-lg shadow-lg">
-        <h1 className="text-2xl font-bold mb-6 text-center">登录</h1>
+    <div className="min-h-screen bg-gray-50 font-sans">
+      {/* The main grid layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
         
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">邮箱</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600"
-              placeholder="请输入邮箱"
-              required
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium mb-2">密码</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600"
-              placeholder="请输入密码"
-              required
-            />
-          </div>
-          
-          {error && (
-            <div className="text-red-600 text-sm">{error}</div>
-          )}
-          
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition disabled:opacity-50"
-          >
-            {loading ? '登录中...' : '登录'}
-          </button>
-        </form>
-        
-        <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-          还没有账号？
-          <a href="/signup" className="text-blue-600 hover:underline ml-1">
-            立即注册
-          </a>
+        {/* Left Column: The Form */}
+        <div className="flex flex-col justify-between p-8 md:p-12">
+          {/* Header */}
+          <header className="flex justify-between items-center">
+            <Link href="/" className="flex items-center gap-2">
+              <svg width="24" height="24" viewBox="0 0 76 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M38 0L0.240387 64.5H75.7596L38 0Z" fill="#3ECF8E"/>
+              </svg>
+              <span className="font-bold text-lg">supabase</span>
+            </Link>
+            <Link href="/docs" className="hidden md:flex items-center gap-2 text-sm border rounded-md px-3 py-1.5 hover:bg-gray-100">
+              <BookOpen size={14} />
+              ドキュメント
+            </Link>
+          </header>
+
+          {/* Form Container */}
+          <main className="flex items-center justify-center w-full">
+            <div className="w-full max-w-sm space-y-6">
+              <div>
+                <h1 className="text-3xl font-bold">おかえりなさい</h1>
+                <p className="text-gray-500 mt-2">アカウントにサインインしてください</p>
+              </div>
+
+              {/* Social Logins */}
+              <div className="space-y-3">
+                <button className="w-full flex items-center justify-center gap-2 p-3 border border-green-400 rounded-md hover:bg-gray-50 font-semibold">
+                  <Github size={20} />
+                  GitHubで続行
+                </button>
+                <button className="w-full flex items-center justify-center gap-2 p-3 border rounded-md hover:bg-gray-50 font-semibold">
+                  <Lock size={20} />
+                  SSOで続行
+                </button>
+              </div>
+
+              {/* Separator */}
+              <div className="flex items-center">
+                <hr className="flex-grow border-t" />
+                <span className="mx-4 text-gray-400 text-sm">または</span>
+                <hr className="flex-grow border-t" />
+              </div>
+
+              {/* Email & Password Form */}
+              <form className="space-y-4">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium mb-1">メールアドレス</label>
+                  <input
+                    type="email"
+                    id="email"
+                    defaultValue="sparkbyte's web"
+                    className="w-full p-3 border rounded-md bg-blue-50 border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <label htmlFor="password"className="block text-sm font-medium">パスワード</label>
+                    <Link href="/forgot-password"className="text-sm text-gray-600 hover:underline">
+                      パスワードを忘れた場合
+                    </Link>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="password"
+                      id="password"
+                      defaultValue="••••••••••••"
+                      className="w-full p-3 border rounded-md bg-blue-50 border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                    <button type="button" className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500">
+                      <Eye size={18} />
+                    </button>
+                  </div>
+                </div>
+                <button type="submit" className="w-full bg-green-500 text-white p-3 rounded-md hover:bg-green-600 font-semibold transition-colors">
+                  サインイン
+                </button>
+              </form>
+              
+              <p className="text-center text-sm text-gray-600">
+                アカウントをお持ちでない場合？ <Link href="/signup" className="font-semibold hover:underline">今すぐサインアップ</Link>
+              </p>
+            </div>
+          </main>
+
+          {/* Footer */}
+          <footer className="text-center text-xs text-gray-400">
+            続行することで、Supabaseの<Link href="/terms" className="underline">利用規約</Link>と<Link href="/privacy" className="underline">プライバシーポリシー</Link>に同意し、更新情報の定期的なメールを受け取ることに同意します。
+          </footer>
         </div>
+
+        {/* Right Column: The Testimonial */}
+        <div className="hidden md:flex items-center justify-center bg-white p-12">
+          <div className="max-w-md text-center relative">
+            <span className="absolute -top-12 -left-12 text-9xl text-gray-100 font-serif opacity-80 select-none">“</span>
+            <blockquote className="text-2xl font-medium text-gray-800 leading-relaxed">
+              このプロジェクトは現在開発中です。ご期待ください。
+            </blockquote>
+            <footer className="mt-8 flex items-center justify-center">
+              <div className="flex items-center justify-center w-12 h-12 bg-green-500 text-white rounded-full font-bold text-xl">
+                茅
+              </div>
+              <div className="ml-4 text-left">
+                <p className="font-semibold text-gray-800">茅野</p>
+                <p className="text-sm text-gray-600">プロジェクト開発者</p>
+              </div>
+            </footer>
+          </div>
+        </div>
+
       </div>
     </div>
   );
 };
 
-export default Login;
+export default LoginPage;
