@@ -1,46 +1,25 @@
 "use client";
 
 import Link from 'next/link';
-import { ChevronDown, Github } from 'lucide-react';
+import { Github, Menu } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-// import { Button } from '@/components/ui/button';
-
-const handleClick = async () => {
-  // 1. 从
-}
+import { motion } from 'framer-motion';
 
 /**
- * 这是一个从后端获取 GitHub 仓库星标数量的组件
- * Props:
- * - owner: 仓库所有者的用户名
- * - repo: 仓库名称
- * 返回值:
- * 一个显示星标数量的链接按钮
+ * GitHub Star Button Component
  */
 function GitHubStarButton({ owner, repo }: { owner: string; repo: string }) {
-  // 保存星标数量的状态，初始值为 null
   const [stars, setStars] = useState<number | null>(null);
-  // 保存加载状态的状态，初始值为 false
   const [loading, setLoading] = useState(false);
 
-  // 使用 useEffect 在组件挂载时获取星标数量
   useEffect(() => {
     const fetchStars = async () => {
       setLoading(true);
       try {
-        // 调用后端 API 获取星标数量
         const response = await axios.get(`http://127.0.0.1:8080/github/stars/${owner}/${repo}`);
-        // 后端返回格式：
-        //   code: 200,
-        //   success: true,
-        //   data: { stars: 0 },
-        //   message: "Repository stars fetched successfully"
-        // }
         if (response.data && response.data.success) {
           setStars(response.data.data.stars);
-        } else {
-          console.error('Failed to fetch stars:', response.data.message);
         }
       } catch (error) {
         console.error('Error fetching stars:', error);
@@ -52,67 +31,67 @@ function GitHubStarButton({ owner, repo }: { owner: string; repo: string }) {
     fetchStars();
   }, [owner, repo]);
 
-  // 显示加载状态或星标数量
-  const displayStars = loading ? '...' : stars !== null ? stars.toString() : '?';
+  const displayStars = loading ? '...' : stars !== null ? stars.toString() : 'Star';
 
   return (
-    <Link href={`https://github.com/${owner}/${repo}`} target="_blank" className="flex items-center gap-2 border border-gray-600 rounded-md px-3 py-1.5 hover:border-gray-400">
+    <Link
+      href={`https://github.com/${owner}/${repo}`}
+      target="_blank"
+      className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-primary/50 transition-all text-sm text-muted-foreground hover:text-foreground"
+    >
       <Github size={16} />
-      <span>{displayStars}</span>
+      <span className="font-medium">{displayStars}</span>
     </Link>
   );
 }
 
-
-
 const Navbar = () => {
   return (
-    <header className="sticky top-0 z-50 bg-black text-white p-4 border-b border-white/10">
-      <nav className="container mx-auto flex justify-between items-center">
-        {/* 左侧 Logo 和导航链接 */}
+    <motion.header
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-black/50 backdrop-blur-md"
+    >
+      <nav className="container mx-auto px-6 h-16 flex justify-between items-center">
+        {/* Left: Logo */}
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2">
-            {/* 你可以在 public 文件夹下放置你的 SVG logo */}
-            {/* <img src="/logo.svg" alt="Logo" className="h-8" /> */}
-            <span className="font-bold text-xl">Orpheus</span>
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-6 h-6 bg-primary rounded-full blur-[1px] opacity-80 group-hover:opacity-100 transition-opacity" />
+            <span className="font-bold text-lg tracking-tight text-foreground">Orpheus</span>
           </Link>
-          <ul className="hidden md:flex items-center gap-6">
-            <li>
-              <Link href="/product" className="flex items-center gap-1 hover:text-gray-300">
-                製品 <ChevronDown size={16} />
-              </Link>
-            </li>
-            <li>
-              <Link href="/developers" className="flex items-center gap-1 hover:text-gray-300">
-                開発者 <ChevronDown size={16} />
-              </Link>
-            </li>
-            <li>
-              <Link href="/solutions" className="flex items-center gap-1 hover:text-gray-300">
-                ソリューション <ChevronDown size={16} />
-              </Link>
-            </li>
-            <li><Link href="/pricing" className="hover:text-gray-300">料金</Link></li>
-            <li><Link href="/docs" className="hover:text-gray-300">ドキュメント</Link></li>
-            <li><Link href="/blog" className="hover:text-gray-300">ブログ</Link></li>
+
+          {/* Desktop Links */}
+          <ul className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
+            <li><Link href="/features" className="hover:text-primary transition-colors">Features</Link></li>
+            <li><Link href="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
+            <li><Link href="/docs" className="hover:text-primary transition-colors">Docs</Link></li>
+            <li><Link href="/blog" className="hover:text-primary transition-colors">Blog</Link></li>
           </ul>
         </div>
 
-        {/* 右侧部分 */}
+        {/* Right: Actions */}
         <div className="hidden md:flex items-center gap-4">
           <GitHubStarButton owner="KayanoLiam" repo="Orpheus" />
-          <Link href="/dashboard" className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 inline-block" onClick={() => console.log('Dashboard link clicked')}>
-              ダッシュボード
+
+          <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            Sign in
           </Link>
-          {/* <img src="/avatar.jpg" alt="User Avatar" className="h-8 w-8 rounded-full" /> */}
+
+          <Link
+            href="/login"
+            className="text-sm font-bold px-4 py-2 rounded-full bg-primary text-black hover:bg-primary/90 transition-all shadow-[0_0_15px_-5px_rgba(var(--primary),0.5)]"
+          >
+            Get Started
+          </Link>
         </div>
 
-        {/* 移动端菜单按钮 (可选) */}
-        <div className="md:hidden">
-          {/* 这里可以放置一个汉堡菜单按钮 */}
+        {/* Mobile Menu Button */}
+        <div className="md:hidden text-muted-foreground hover:text-foreground cursor-pointer">
+          <Menu size={24} />
         </div>
       </nav>
-    </header>
+    </motion.header>
   );
 };
 
