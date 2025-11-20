@@ -1,4 +1,3 @@
-// 自令和7年11.17之后，不再提供中文注释
-pub mod user_handler;
-pub mod session_handler;
+// Handlers module - API endpoint handlers
 pub mod github_handler;
+pub mod schema_handler;

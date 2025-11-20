@@ -1,6 +1,12 @@
-// 严格的安全编码策略：禁用可能引发 panic 或不安全的操作
-// 自令和7年11.17之后，不再提供中文注释
-// 厳密なセキュリティコーディング戦略：パニックや安全でない操作を禁止
+// Orpheus - Backend-as-a-Service Platform
+// 类 Supabase 的核心 BaaS 功能
+// 
+// 核心功能：
+// 1. Auto REST API - 自动将数据库表转换为 RESTful API
+// 2. Realtime - 实时数据订阅 (WebSocket)
+// 3. Storage - S3 兼容的对象存储
+// 4. Meta API - 数据库管理 API
+
 #![deny(clippy::unwrap_used)]
 #![deny(clippy::expect_used)]
 #![deny(clippy::panic)]
@@ -10,135 +16,107 @@
 #![deny(clippy::indexing_slicing)]
 #![deny(unused)]
 
-// 模块声明
-// モジュール宣言
-mod auth; // 認証関連機能
-mod config;
-mod handlers; // HTTPリクエストハンドラ
-mod middlewares; // ミドルウェア
-mod models; // データモデル // 設定定数
+// 核心模块声明
+mod schema;    // ✅ 数据库 schema 反射（已实现）
+// mod rest;      // Auto REST API（下一步）
+// mod realtime;  // 实时订阅
+// mod storage;   // 对象存储
+// mod meta;      // 数据库管理 API
 
-// 导入处理器函数
-// ハンドラー関数をインポート
-use crate::handlers::session_handler::{user_logout, user_profile};
-use crate::handlers::user_handler::{user_login, user_reset_password, user_signup};
-// 导入会话验证中间件
-// セッション検証ミドルウェアをインポート
-use crate::middlewares::session::session_validator;
-// 导入 Actix-Web 核心组件
-// Actix-Webコアコンポーネントをインポート
-use actix_web::{web, App, HttpServer};
-// 导入 HTTP 认证中间件
-// HTTP認証ミドルウェアをインポート
-use actix_web_httpauth::middleware::HttpAuthentication;
-// 导入环境变量加载器
-// 環境変数ローダーをインポート
-use dotenvy::dotenv;
-// 导入数据库连接池
-// データベース接続プールをインポート
-use sqlx::{Pool, Postgres};
-// 导入环境变量处理
-// 環境変数処理をインポート
+// 临时保留的模块
+mod models;    // 基础数据模型
+mod handlers;  // 临时保留 GitHub handler 作为 API 示例
+
 use crate::handlers::github_handler::get_github_repo_stars;
-use orpheus::handlers::user_handler::user_delete;
+use crate::handlers::schema_handler;
+use crate::schema::SchemaCache;
+use actix_web::{web, App, HttpServer};
+use dotenvy::dotenv;
+use sqlx::{Pool, Postgres};
 use std::env;
-use crate::auth::status::auth_status;
 
-/// 应用程序入口点
-/// 自令和7年11.17之后，不再提供中文注释
-/// アプリケーションエントリーポイント
+/// Orpheus BaaS 平台主入口
 ///
-/// 初始化数据库连接、Redis 连接，并启动 HTTP 服务器
-/// データベース接続、Redis接続を初期化し、HTTPサーバーを起動します
-///
-/// # 返回
-/// # 戻り値
-/// 成功时返回 Ok(())，失败时返回错误信息
-/// 成功時はOk(())を返し、失敗時はエラー情報を返します
+/// 初始化：
+/// - PostgreSQL 数据库连接池
+/// - Redis 连接（用于缓存和会话）
+/// - HTTP 服务器
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    // 加载 .env 文件中的环境变量
-    // .envファイルから環境変数をロード
+    // 加载环境变量
     dotenv().ok();
 
-    // 从环境变量获取数据库连接字符串
-    // 環境変数からデータベース接続文字列を取得
+    // 数据库连接
     let database_url: String = env::var("DATABASE_URL")?;
-    // 创建 PostgreSQL 数据库连接池
-    // PostgreSQLデータベース接続プールを作成
     let pool: Pool<Postgres> = Pool::<Postgres>::connect(&database_url).await?;
 
-    // 从环境变量获取 Redis 连接字符串
-    // 環境変数からRedis接続文字列を取得
+    // Redis 连接
     let redis_url: String = env::var("REDIS_URL")?;
-    // 创建 Redis 客户端
-    // Redisクライアントを作成
     let client = redis::Client::open(redis_url)?;
 
-    // 输出服务器启动信息
-    // サーバー起動情報を出力
-    println!("The server is starting on http://127.0.0.1:8080");
+    // 初始化 Schema 缓存
+    let schema_cache = SchemaCache::with_defaults(pool.clone());
+
+    println!("🚀 Orpheus BaaS Platform");
+    println!("   Core Services:");
+    println!("   - Auto REST API: 开发中...");
+    println!("   - Realtime:      开发中...");
+    println!("   - Storage:       开发中...");
+    println!("   - Meta API:      开发中...");
+    println!();
+    println!("   ✅ Schema Inspector: 已实现");
+    println!();
+    println!("🌐 Server running at http://127.0.0.1:8080");
+    println!();
+    println!("📚 Schema API 端点:");
+    println!("   GET  /schema/tables              - 列出所有表");
+    println!("   GET  /schema/tables/{{name}}       - 获取表结构");
+    println!("   GET  /schema/overview            - Schema 概览");
+    println!("   GET  /schema/cached/tables/{{name}} - 获取表结构（缓存）");
+    println!("   GET  /schema/cache/stats         - 缓存统计");
+    println!("   POST /schema/cache/preload       - 预加载缓存");
+    println!();
+    println!("📚 其他示例端点:");
+    println!("   GET  /github/stars/:owner/:repo  - GitHub 仓库 stars 查询");
+    println!();
+    println!("💡 提示: 用户认证示例代码已移至 examples/authentication/");
+    println!("💡 提示: 前端管理面板已移至 archived_projects/orpheus-admin-panel/");
 
     // 创建并配置 HTTP 服务器
-    // HTTPサーバーを作成・設定
     HttpServer::new(move || {
-        // 初始化cors中间件
-        // CORSミドルウェアを初期化
+        // CORS 配置
         let cors = actix_cors::Cors::default()
-            .allowed_origin("http://localhost:3000") // 只允许前端域名 / フロントエンドドメインのみ許可
-            .allowed_methods(vec!["GET"]) // 只允许 GET 请求 / GETリクエストのみ許可
-            .allowed_headers(vec![actix_web::http::header::CONTENT_TYPE])
+            .allowed_origin("http://localhost:3000")
+            .allowed_methods(vec!["GET", "POST", "PATCH", "DELETE"])
+            .allowed_headers(vec![
+                actix_web::http::header::CONTENT_TYPE,
+                actix_web::http::header::AUTHORIZATION,
+            ])
             .max_age(3600);
 
-        // 创建 Bearer Token 认证中间件
-        // Bearer Token認証ミドルウェアを作成
-        let auth = HttpAuthentication::bearer(session_validator);
-
-        // 配置应用程序
-        // アプリケーションを設定
         App::new()
-            // 应用 CORS 中间件
-            // CORSミドルウェアを適用
             .wrap(cors)
-            // 注册数据库连接池为应用数据
-            // データベース接続プールをアプリケーションデータとして登録
-            .app_data(actix_web::web::Data::new(pool.clone()))
-            // 注册 Redis 客户端为应用数据
-            // Redisクライアントをアプリケーションデータとして登録
-            .app_data(actix_web::web::Data::new(client.clone()))
-            // 公开端点：用户注册
-            // 公開エンドポイント：ユーザー登録
-            .service(user_signup)
-            // 公开端点：用户登录
-            // 公開エンドポイント：ユーザーログイン
-            .service(user_login)
-            // 公开端点：用户登出
-            // 公開エンドポイント：ユーザーログアウト
-            .service(user_logout)
-            .service(user_reset_password)
-            .service(user_delete)
+            .app_data(web::Data::new(pool.clone()))
+            .app_data(web::Data::new(client.clone()))
+            .app_data(web::Data::new(schema_cache.clone()))
+            // Schema API 端点
+            .service(schema_handler::get_tables)
+            .service(schema_handler::get_table_info)
+            .service(schema_handler::get_schema_overview)
+            .service(schema_handler::get_cached_table_info)
+            .service(schema_handler::get_cache_stats)
+            .service(schema_handler::clear_cache)
+            .service(schema_handler::preload_cache)
+            // 示例端点：GitHub API 集成
             .service(get_github_repo_stars)
-            .service(auth_status)
-            // 需要认证的 API 端点组
-            // 認証が必要なAPIエンドポイントグループ
-            .service(
-                web::scope("/api")
-                    // 应用认证中间件
-                    // 認証ミドルウェアを適用
-                    .wrap(auth)
-                    // 受保护端点：获取用户资料
-                    // 保護されたエンドポイント：ユーザープロフィール取得
-                    .service(user_profile),
-            )
+            // TODO: 添加核心 BaaS 端点
+            // .service(web::scope("/rest/v1").configure(rest::configure))
+            // .service(web::scope("/realtime/v1").configure(realtime::configure))
+            // .service(web::scope("/storage/v1").configure(storage::configure))
+            // .service(web::scope("/meta/v1").configure(meta::configure))
     })
-    // 设置工作线程数量
-    // ワーカースレッド数を設定
     .workers(10)
-    // 绑定到本地地址和端口
-    // ローカルアドレスとポートにバインド
     .bind(("0.0.0.0", 8080))?
-    // 启动服务器并等待完成
-    // サーバーを起動し完了を待機
     .run()
     .await?;
 

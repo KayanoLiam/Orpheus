@@ -71,6 +71,7 @@ Desktop.ini
 
 .env
 IFLOW.md
+SUPABASE_CORE_ROADMAP.md
 
 # 忽略所有 .env.* 文件，除了 .env.example
 .env.*
@@ -105,3 +106,16 @@ IFLOW.md
 
 # Local project configs
 *.local
+
+# ===============================
+# Important: Keep examples and archives
+# ===============================
+# examples/ 和 archived_projects/ 目录应该被提交到 git
+# 这些包含重要的示例代码和归档项目
+# !examples/
+# !archived_projects/
+
+REFACTORING_SUMMARY.md
+SCHEMA_INSPECTOR_SUMMARY.md
+SCHEMA_TESTS_FINAL_REPORT.md
+SCHEMA_TESTS_SUMMARY.md
